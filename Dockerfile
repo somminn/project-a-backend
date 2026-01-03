@@ -1,7 +1,7 @@
 # 1단계: 빌드
 FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
-COPY . .
+COPY . /app
 RUN chmod +x gradlew && bash ./gradlew build -x test --no-daemon
 
 # 2단계: 런타임
