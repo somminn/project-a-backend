@@ -11,14 +11,40 @@ jobs:
       - name: Checkout app repo
         uses: actions/checkout@v4
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push backend image (multi-arch)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: cowmin/project-a-backend:${{ github.sha }}
+
       - name: Checkout GitOps repo
         uses: actions/checkout@v4
         with:
           repository: somminn/project-a-gitops
           path: gitops
           ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+      
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version    
 
-      - name: Update Backend image tag
+      - name: Update backend image tag
         run: |
           cd gitops/app/backend
           git config user.name "github-actions"
