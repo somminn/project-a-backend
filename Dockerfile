@@ -2,7 +2,7 @@
 FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
 COPY . .
-RUN ./gradlew build -x test
+RUN chmod +x gradlew && ./gradlew build -x test
 
 # 2단계: 런타임
 FROM eclipse-temurin:17-jre
