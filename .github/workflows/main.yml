@@ -1,0 +1,32 @@
+name: GitOps Backend Tag Update
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-gitops:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+        with:
+          repository: somminn/project-a-gitops
+          path: gitops
+          ssh-key: ${{ secrets.GITOPS_DEPLOY_KEY }}
+
+      - name: Update Backend image tag
+        run: |
+          cd gitops/app/backend
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          yq -i '.images[0].newTag = "${{ github.sha }}"' kustomization.yml
+
+          git add kustomization.yml
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "[Chore] 백엔드 이미지 태그 업데이트"
+          git push
