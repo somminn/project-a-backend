@@ -53,5 +53,5 @@ jobs:
 
           git add kustomization.yml
           git diff --cached --quiet && echo "No changes" && exit 0
-          git commit -m "[Chore] 백엔드 이미지 태그 업데이트"
+          git commit -m "[Chore] Update backend image tag"
           git push
