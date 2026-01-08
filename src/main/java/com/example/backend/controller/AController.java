@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AController {
     @GetMapping("/")
     public String check() {
-        return "OK!";
+        return "Test1";
     }
 }
